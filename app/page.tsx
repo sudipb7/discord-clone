@@ -9,7 +9,7 @@ export default function Home() {
       <h1 className="text-primary text-2xl md:text-3xl font-mono font-bold tracking-wide leading-normal">
         Welcome to Discord
       </h1>
-      <p className="max-w-[52rem] mx-auto text-center font-medium leading-snug">
+      <p className="text-zinc-600 max-w-[52rem] mx-auto text-center font-medium leading-snug">
         Discord is the easiest way to communicate over voice, video, and text. Chat, hang out, and
         stay close with your friends and communities.
       </p>

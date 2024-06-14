@@ -13,7 +13,6 @@ model User {
   email         String    @unique
   emailVerified DateTime? @map("email_verified")
   image         String?
-  password      String?
   accounts      Account[]
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -43,14 +42,4 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
-}
-
-model Otp {
-  id      String   @id @default(cuid())
-  email   String
-  otp     Int
-  expires DateTime
-
-  @@unique([email, otp])
-  @@map("otps")
 }

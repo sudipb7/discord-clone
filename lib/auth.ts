@@ -1,9 +1,10 @@
 import NextAuth from "next-auth";
+import Google from "next-auth/providers/google";
+import Github from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
-import authConfig from "@/auth.config";
 import { db } from "@/lib/db";
-import { getUserById, getUserAccountById } from "@/lib/queries";
+import { getUserById } from "@/lib/queries";
 
 export const {
   auth,
@@ -11,6 +12,10 @@ export const {
   signOut,
   handlers: { GET, POST },
 } = NextAuth({
+  providers: [
+    Google({ allowDangerousEmailAccountLinking: true }),
+    Github({ allowDangerousEmailAccountLinking: true }),
+  ],
   events: {
     async linkAccount({ user }) {
       await db.user.update({
@@ -20,23 +25,12 @@ export const {
     },
   },
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider !== "credentials") return true;
-
-      const existingUser = await getUserById(user.id!);
-      if (!existingUser?.emailVerified) return false;
-
-      return true;
-    },
     async jwt({ token }) {
       if (!token.sub) return token;
 
       const user = await getUserById(token.sub);
       if (!user) return token;
 
-      const existingAccount = await getUserAccountById(user?.id);
-
-      token.isOauth = !!existingAccount;
       token.name = user.name;
       token.email = user.email;
 
@@ -54,17 +48,12 @@ export const {
       }
 
       session.user.name = token.name;
-      session.user.isOAuth = token.isOAuth as boolean;
 
       return session;
     },
   },
-  pages: {
-    signIn: "/auth/sign-in",
-    error: "/auth/error",
-  },
+  pages: { signIn: "/sign-in" },
   session: { strategy: "jwt" },
   adapter: PrismaAdapter(db),
   debug: process.env.NODE_ENV === "development",
-  ...authConfig,
 });

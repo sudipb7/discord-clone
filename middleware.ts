@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
 
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
-  const authRoutes = ["/auth/sign-in", "/auth/sign-up", "/auth/error"];
 
   const isPublicRoute = nextUrl.pathname === "/";
   const isApiAuthRoute = nextUrl.pathname.startsWith("/api/auth");
-  const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  const isAuthRoute = nextUrl.pathname === "/sign-in";
 
   if (isApiAuthRoute) return;
 
@@ -17,7 +16,7 @@ export default auth((req) => {
     return NextResponse.redirect(new URL("/", nextUrl));
   }
 
-  if (!isLoggedIn && !isPublicRoute) {
+  if (!isLoggedIn && !isAuthRoute && !isPublicRoute) {
     let redirectUrl = nextUrl.pathname;
     if (nextUrl.search) {
       redirectUrl += nextUrl.search;
@@ -25,7 +24,7 @@ export default auth((req) => {
 
     const encodedRedirectUrl = encodeURIComponent(redirectUrl);
 
-    return Response.redirect(new URL(`/auth/sign-in?redirectTo=${encodedRedirectUrl}`, nextUrl));
+    return Response.redirect(new URL(`/sign-in?redirectTo=${encodedRedirectUrl}`, nextUrl));
   }
 
   return;

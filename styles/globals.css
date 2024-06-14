@@ -49,6 +49,14 @@
   }
 }
 
+.h1 {
+  @apply text-primary text-2xl md:text-3xl font-mono font-bold tracking-wide leading-normal;
+}
+
+.p {
+  @apply text-zinc-600 dark:text-zinc-300 font-medium leading-snug;
+}
+
 @layer base {
   * {
     @apply border-border;

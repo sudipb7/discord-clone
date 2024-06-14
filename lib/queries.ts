@@ -1,13 +1,5 @@
-import { auth } from "@/auth";
-import { db } from "@/lib/db";
-
-export async function getUserAccountById(userId: string) {
-  try {
-    return await db.account.findFirst({ where: { userId } });
-  } catch (error) {
-    return null;
-  }
-}
+import { db } from "./db";
+import { auth } from "./auth";
 
 export async function getUserById(id: string) {
   try {
